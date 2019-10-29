@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+	"http://struts.apache.org/dtds/struts-2.3.dtd">
+<struts>
+	<!-- 配置Struts2的常量 -->
+	<constant name="struts.action.extension" value="action"/>
+	<constant name="struts.multipart.maxSize" value="100000"></constant>
+	<package name="crm" extends="struts-default" namespace="/">
+		
+		<interceptors>
+			<interceptor name="pri" class="com.itheima.crm.web.interceptor.PrivilegeInterceptor"></interceptor>
+			<interceptor-stack name="myInterceptor">
+				<interceptor-ref name="pri">
+					<param name="excludeMethods">regist,login</param>
+				</interceptor-ref>
+				<interceptor-ref name="defaultStack"></interceptor-ref>
+			</interceptor-stack>
+		</interceptors>
+		
+		<default-interceptor-ref name="myInterceptor"></default-interceptor-ref>
+		<global-results>
+			<result name="login">/login.jsp</result>
+		</global-results>
+		<action name="user_*" class="userAction" method="{1}">
+			
+			<result name="regist" >/login.jsp</result>
+			<result name="login">/index.jsp</result>
+		</action>
+		<action name="customer_*" class="customerAction" method="{1}">
+			<interceptor-ref name="pri">
+				<param name="excludeMethods">regist,login</param>
+			</interceptor-ref>
+			<interceptor-ref name="defaultStack">
+				<param name="fileUpload.maximumSize">2097</param>
+				<param name="fileUpload.allowedExtensions">.text</param>
+			</interceptor-ref>
+			<result name="{1}">/jsp/customer/add.jsp</result>
+			<result name="findAll">/jsp/customer/list.jsp</result>
+			<result name="list" type="redirectAction">/customer_findAll.action</result>
+			<result name="input">/jsp/customer/add.jsp</result>
+			<result name="delete" type="redirectAction">/customer_findAll.action</result>
+			<result name="edit">/jsp/customer/edit.jsp</result>
+			<result name="update" type="redirectAction">/customer_findAll.action</result>
+		</action>
+		
+		<action name="baseDict_*" class="baseDictAction" method="{1}"></action>
+		<action name="linkMan_*" class="linkManAction" method="{1}">
+			<result name="findAll">/jsp/linkman/list.jsp</result>
+			<result name="saveUI">/jsp/linkman/add.jsp</result>
+			<result name="save" type="redirectAction">/linkMan_findAll.action</result>
+			<result name="edit" >/jsp/linkman/edit.jsp</result>
+			<interceptor-ref name="pri">
+				<param name="excludeMethods">regist,login</param>
+			</interceptor-ref>
+			<interceptor-ref name="paramsPrepareParamsStack">
+				<param name="prepare.alwaysInvokePrepare">false</param>
+			</interceptor-ref>
+			<result name="update" type="redirectAction">/linkMan_findAll.action</result>
+			<result name="delete" type="redirectAction">/linkMan_findAll.action</result>
+		</action>
+		<action name="saleVisit_*" class="saleVisitAction" method="{1}">
+			<result name="findAll">/jsp/salevisit/list.jsp</result>
+			<result name="saveUI">/jsp/salevisit/add.jsp</result>
+			<result name="save" type="redirectAction">/saleVisit_findAll.action</result>
+		</action>
+	</package>
+</struts>
